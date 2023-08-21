@@ -1,0 +1,32 @@
+import win32com.client
+import datetime
+
+def get_emails_received_today_with_specific_subject(sentence_in_subject):
+    outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
+    inbox = outlook.GetDefaultFolder(6)  # 6 represents the "Inbox" folder
+
+    # Get today's date
+    today_date = datetime.datetime.today().strftime("%m/%d/%Y")
+
+    # Construct the date and subject filter to match emails received today with the specified sentence in subject
+    date_filter = f"[ReceivedTime] >= '{today_date} 00:00 AM' AND [ReceivedTime] <= '{today_date} 11:59 PM'"
+    subject_filter = f"@SQL=urn:schemas:httpmail:subject LIKE '%{sentence_in_subject}%'"
+
+    # Combine both filters using AND
+    combined_filter = f"({date_filter}) AND ({subject_filter})"
+
+    # Retrieve emails received today with the specified subject
+    restricted_emails = inbox.Items.Restrict(combined_filter)
+    restricted_emails.Sort("[ReceivedTime]", True)  # Sort emails by received time in descending order
+
+    email_list = []
+    for email in restricted_emails:
+        subject = email.Subject
+        email_list.append(subject)
+
+    return email_list
+
+if __name__ == "__main__":
+    specific_sentence = "specific sentence in subject"  # Replace with your specific sentence
+    emails_received_today_with_specific_subject = get_emails_received_today_with_specific_subject(specific_sentence)
+    print(emails_received_today_with_specific_subject)
