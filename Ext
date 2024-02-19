@@ -1,0 +1,45 @@
+document.addEventListener("mouseover", function (e) {
+  const element = e.target;
+
+  // Create a container for the popup and arrow
+  const container = document.createElement("div");
+  container.style.position = "relative";
+
+  // Create a small arrow
+  const arrow = document.createElement("div");
+  arrow.style.position = "absolute";
+  arrow.style.width = "0";
+  arrow.style.height = "0";
+  arrow.style.borderLeft = "5px solid transparent";
+  arrow.style.borderRight = "5px solid transparent";
+  arrow.style.borderBottom = "5px solid #ccc";
+  arrow.style.top = "-5px";
+  arrow.style.left = "50%";
+  arrow.style.transform = "translateX(-50%)";
+
+  // Create the popup
+  const popup = document.createElement("div");
+  popup.style.position = "absolute";
+  popup.style.border = "1px solid #ccc";
+  popup.style.background = "#fff";
+  popup.style.padding = "5px";
+  popup.style.zIndex = "9999";
+  popup.textContent = `Element ID: ${element.id || 'N/A'}`;
+
+  // Append arrow and popup to the container
+  container.appendChild(arrow);
+  container.appendChild(popup);
+
+  // Append the container to the document body
+  document.body.appendChild(container);
+
+  // Position the container over the target element
+  const elementRect = element.getBoundingClientRect();
+  container.style.left = elementRect.left + window.pageXOffset + "px";
+  container.style.top = elementRect.top + window.pageYOffset - popup.offsetHeight - 5 + "px";
+
+  // Remove the container on mouseout
+  element.addEventListener("mouseout", function () {
+    document.body.removeChild(container);
+  });
+});
